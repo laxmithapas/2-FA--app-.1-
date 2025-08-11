@@ -16,12 +16,30 @@
         .message.error { background-color: #fee2e2; color: #991b1b; }
         .message.info { background-color: #e0f2fe; color: #0c4a6e; }
         #qr-code-container img { margin: 1rem auto; display: block; border: 8px solid white; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        /* NEW: Spinner styles */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s ease infinite;
+            display: none; /* Hidden by default */
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="text-gray-800">
 
     <!-- Main Application Container -->
     <div id="app-container" class="min-h-screen flex flex-col items-center justify-center p-4">
+        
+        <!-- NEW: Loading Spinner -->
+        <div id="loading-spinner" class="spinner"></div>
 
         <!-- Landing Page -->
         <div id="landing-page" class="page active text-center">
@@ -103,6 +121,7 @@
             };
             const messageArea = document.getElementById('message-area');
             const qrCodeContainer = document.getElementById('qr-code-container');
+            const spinner = document.getElementById('loading-spinner');
 
             const showMessage = (message, type = 'error') => {
                 messageArea.textContent = message;
@@ -123,12 +142,13 @@
                 authForms[formName].style.display = 'block';
             };
 
+            // UPDATED handleFetch function
             const handleFetch = async (url, options) => {
+                spinner.style.display = 'block'; // Show spinner
                 try {
                     const response = await fetch(url, options);
                     const result = await response.json();
                     if (!response.ok) {
-                        // Special case for existing user during registration
                         if (response.status === 409) {
                             showAuthForm('login');
                             showMessage(result.message, 'info');
@@ -141,6 +161,8 @@
                 } catch (error) {
                     showMessage('Could not connect to the server.', 'error');
                     return null;
+                } finally {
+                    spinner.style.display = 'none'; // Hide spinner
                 }
             };
             
