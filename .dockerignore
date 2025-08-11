@@ -1,0 +1,17 @@
+# .dockerignore
+
+# Exclude dependencies, as they will be installed inside the container
+node_modules
+
+# Exclude environment files, as they will be passed in securely at runtime
+.env
+
+# Exclude session files, which are temporary
+sessions/
+
+# Exclude Docker-related files
+Dockerfile
+.dockerignore
+
+# Exclude git repository folder
+.git
